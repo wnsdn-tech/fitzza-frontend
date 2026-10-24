@@ -20,6 +20,7 @@ import { useAuth } from '../contexts/AuthContext.js'
 import { toNotificationPath, toNotificationText, useNotifications } from '../hooks/useNotifications.js'
 import { usePushNotifications } from '../hooks/usePushNotifications.js'
 import { disablePush } from '../services/pushNotifications.js'
+import { toaster } from '../components/ui/toaster.jsx'
 
 const isNotificationDenied = () => 'Notification' in window && Notification.permission === 'denied'
 
@@ -56,7 +57,11 @@ export const Header = ({ maxWidth = '7xl' }) => {
         await disablePush()
       } catch (error) {
         setIsSigningOut(false)
-        alert(error.message || '푸시 알림을 해제하지 못했습니다. 다시 시도해주세요.')
+        toaster.create({
+          title: error.message || '푸시 알림을 해제하지 못했습니다. 다시 시도해주세요.',
+          type: 'error',
+          closable: true,
+        })
         return
       }
 
@@ -66,8 +71,11 @@ export const Header = ({ maxWidth = '7xl' }) => {
 
       setAccessToken(null)
       setIsSigningOut(false)
-      alert('로그아웃되었습니다.')
-      navigate('/signin')
+      toaster.create({
+        title: '로그아웃되었습니다.',
+        type: 'success',
+        closable: true,
+      })
 
     } else {
       navigate('/signin')
